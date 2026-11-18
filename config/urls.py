@@ -16,4 +16,9 @@ urlpatterns = [
         include('orders.urls')
     ),
 
+    path(
+    'api/payments/',
+    include('payments.urls')
+),
+
 ]

@@ -18,7 +18,11 @@ SECRET_KEY = os.getenv(
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'occasion-bluetooth-linked-dean.trycloudflare.com',
+]
 
 
 # APPLICATIONS
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
      # Our applications
     'products',
     'orders',
+    'payments',
 ]
 
 
@@ -152,3 +157,17 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
+
+# M-Pesa Daraja Configuration
+
+MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY')
+
+MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET')
+
+MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
+
+MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
+
+MPESA_ENVIRONMENT = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
+
+MPESA_CALLBACK_URL = os.getenv('MPESA_CALLBACK_URL')
