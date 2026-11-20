@@ -2,34 +2,39 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables
 load_dotenv(BASE_DIR / '.env')
 
 
 # SECURITY SETTINGS
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 SECRET_KEY = os.getenv('SECRET_KEY')
+
 if not SECRET_KEY:
     if not DEBUG:
         raise ImproperlyConfigured(
-            'Set SECRET_KEY to a private value when DEBUG is disabled.'
+            'Set SECRET_KEY when DEBUG is disabled.'
         )
     SECRET_KEY = 'django-insecure-development-key'
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'occasion-bluetooth-linked-dean.trycloudflare.com',
+    host.strip()
+    for host in os.getenv(
+        'ALLOWED_HOSTS',
+        '127.0.0.1,localhost'
+    ).split(',')
+    if host.strip()
 ]
 
 
 # APPLICATIONS
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,11 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third party applications
     'rest_framework',
     'corsheaders',
 
-     # Our applications
     'products',
     'orders',
     'payments',
@@ -50,11 +53,12 @@ INSTALLED_APPS = [
 
 
 # MIDDLEWARE
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -64,10 +68,12 @@ MIDDLEWARE = [
 
 
 # URL CONFIGURATION
+
 ROOT_URLCONF = 'config.urls'
 
 
 # TEMPLATES
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -85,6 +91,7 @@ TEMPLATES = [
 
 
 # WSGI APPLICATION
+
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
@@ -103,8 +110,15 @@ DATABASES = {
     }
 }
 
+if os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True,
+    )
+
 
 # PASSWORD VALIDATION
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -122,34 +136,45 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # INTERNATIONALIZATION
+
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Africa/Nairobi'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
 # STATIC FILES
-STATIC_URL = 'static/'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+    BASE_DIR / 'static'
+] if (BASE_DIR / 'static').exists() else []
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 
 # MEDIA FILES
-MEDIA_URL = 'media/'
 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # DEFAULT PRIMARY KEY
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # DJANGO REST FRAMEWORK
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -157,20 +182,44 @@ REST_FRAMEWORK = {
 }
 
 
-# CORS CONFIGURATION
+# CORS AND CSRF CONFIGURATION
+
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:5173,http://127.0.0.1:5173'
+    ).split(',')
+    if origin.strip()
 ]
 
-# M-Pesa Daraja Configuration
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        'http://localhost:5173,http://127.0.0.1:5173'
+    ).split(',')
+    if origin.strip()
+]
+
+
+# PRODUCTION SECURITY
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SECURE_SSL_REDIRECT = os.getenv(
+    'SECURE_SSL_REDIRECT', 'False'
+).lower() == 'true'
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
+
+# M-PESA DAR AJA CONFIGURATION
 
 MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY')
-
 MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET')
-
 MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
-
 MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
 
 MPESA_ENVIRONMENT = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
@@ -181,10 +230,3 @@ MPESA_TRANSACTION_TYPE = os.getenv(
 )
 
 MPESA_CALLBACK_URL = os.getenv('MPESA_CALLBACK_URL')
-
-
-
-# CORS CONFIGURATION
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]

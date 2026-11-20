@@ -21,7 +21,11 @@ credentials into source code or chat.
      `https://<your-public-host>/api/payments/callback/`.
 4. Ensure the callback host is publicly accessible over HTTPS and is allowed
    by Django's `ALLOWED_HOSTS`. Localhost is not reachable by Safaricom; use a
-   public HTTPS tunnel during development or a deployed HTTPS domain.
+   public HTTPS tunnel during development or a deployed HTTPS domain. For a
+   separately hosted frontend, set `CSRF_TRUSTED_ORIGINS` to its full origin
+   (including scheme and port, if any); this is separate from `ALLOWED_HOSTS`.
+   Local Vite origins `http://localhost:5173` and `http://127.0.0.1:5173` are
+   trusted by default.
 5. In production, set `DEBUG=False` and a private, randomly generated
    `SECRET_KEY`; signed customer payment-status links depend on that key.
 6. Restart Django after changing `.env`.
@@ -32,6 +36,9 @@ checkout ID, amount, and phone number before the order is marked paid. The
 receipt is shown on the confirmation page and is available in Django admin.
 If callback details do not match, the payment stays pending and is flagged
 for reconciliation rather than being marked paid.
+
+The frontend fetches `/api/csrf/` before submitting an order or STK request and
+sends the returned token in the `X-CSRFToken` header.
 
 The payee name shown in the M-Pesa prompt is registered to the shortcode by
 Safaricom; it is not a custom STK Push payload field. The sandbox demo

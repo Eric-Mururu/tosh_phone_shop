@@ -2,6 +2,19 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+const getCsrfToken = async () => {
+  const response = await fetch('/api/csrf/')
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok || !data?.csrfToken) {
+    throw new Error(
+      `Unable to prepare a secure request (HTTP ${response.status}).`
+    )
+  }
+
+  return data.csrfToken
+}
+
 function App() {
   const [phones, setPhones] = useState([])
   const [cart, setCart] = useState([])
@@ -31,12 +44,14 @@ function App() {
   })
 
   const requestStkPush = async (order, phoneNumber) => {
+    const csrfToken = await getCsrfToken()
     const response = await fetch(
       `/api/payments/orders/${order.id}/stk-push/`,
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({ phone_number: phoneNumber })
       }
@@ -388,12 +403,14 @@ const sortedPhones = [...filteredPhones].sort((a, b) => {
     let createdOrder = null
 
     try {
+      const csrfToken = await getCsrfToken()
       const response = await fetch(
         '/api/orders/',
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
           },
           body: JSON.stringify(orderData)
         }
