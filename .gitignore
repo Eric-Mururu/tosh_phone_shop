@@ -7,3 +7,27 @@ __pycache__/
 db.sqlite3
 media/
 staticfiles/
+
+# Python environment
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# React dependencies and generated files
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Local backups
+*.backup
+*.bak
+
+# Logs
+*.log

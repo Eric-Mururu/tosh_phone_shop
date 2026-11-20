@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,12 +12,15 @@ load_dotenv(BASE_DIR / '.env')
 
 
 # SECURITY SETTINGS
-SECRET_KEY = os.getenv(
-    'SECRET_KEY',
-    'django-insecure-development-key'
-)
-
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'Set SECRET_KEY to a private value when DEBUG is disabled.'
+        )
+    SECRET_KEY = 'django-insecure-development-key'
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -170,4 +175,16 @@ MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
 
 MPESA_ENVIRONMENT = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
 
+MPESA_TRANSACTION_TYPE = os.getenv(
+    'MPESA_TRANSACTION_TYPE',
+    'CustomerPayBillOnline'
+)
+
 MPESA_CALLBACK_URL = os.getenv('MPESA_CALLBACK_URL')
+
+
+
+# CORS CONFIGURATION
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]

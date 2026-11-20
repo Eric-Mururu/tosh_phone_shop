@@ -1,5 +1,6 @@
 
 from django.db import models
+
 from orders.models import Order
 
 
@@ -17,7 +18,9 @@ class Payment(models.Model):
         related_name='payments'
     )
 
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(
+        max_length=15
+    )
 
     amount = models.DecimalField(
         max_digits=10,
@@ -70,9 +73,17 @@ class Payment(models.Model):
         null=True
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    requires_reconciliation = models.BooleanField(
+        default=False
+    )
 
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
 
     def __str__(self):
         return f"Payment {self.id} for Order {self.order.id}"
