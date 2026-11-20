@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
 
     'rest_framework',
     'corsheaders',
@@ -161,6 +163,10 @@ STORAGES = {
     },
 }
 
+if os.getenv('CLOUDINARY_URL'):
+    STORAGES['default'] = {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+    }
 
 # MEDIA FILES
 
