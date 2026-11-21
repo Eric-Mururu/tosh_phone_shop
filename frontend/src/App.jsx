@@ -955,7 +955,7 @@ const sortedPhones = [...filteredPhones].sort((a, b) => {
                   name="customer_name"
                   value={customer.customer_name}
                   onChange={handleCustomerChange}
-                  placeholder="e.g. John Doe"
+                  placeholder="e.g. Wanjiku Mwangi"
                   required
                 />
               </div>
@@ -986,7 +986,7 @@ const sortedPhones = [...filteredPhones].sort((a, b) => {
                   name="customer_email"
                   value={customer.customer_email}
                   onChange={handleCustomerChange}
-                  placeholder="e.g. john@example.com"
+                  placeholder="e.g. wanjiku.mwangi@example.com"
                 />
               </div>
 
@@ -998,7 +998,7 @@ const sortedPhones = [...filteredPhones].sort((a, b) => {
                   name="delivery_address"
                   value={customer.delivery_address}
                   onChange={handleCustomerChange}
-                  placeholder="Enter your location and delivery details"
+                  placeholder="e.g. Kilimani, Nairobi"
                   rows="4"
                   required
                 />
