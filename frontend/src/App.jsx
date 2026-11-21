@@ -497,9 +497,14 @@ const sortedPhones = [...filteredPhones].sort((a, b) => {
 
       {/* Navigation */}
       <header className="navbar">
-        <div className="logo">
+        <a
+          className="logo"
+          href="#home"
+          onClick={navigateToSection('home')}
+          aria-label="Tosh Phone Shop home"
+        >
           TOSH<span> PHONE SHOP</span>
-        </div>
+        </a>
 
         <nav>
         <a href="#home" onClick={navigateToSection('home')}>Home</a>
