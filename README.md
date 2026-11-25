@@ -5,12 +5,6 @@ A full-stack e-commerce web application for buying smartphones in Kenya. Custome
 **Live site:** https://tosh-phone-shop.onrender.com
 *(Hosted on a free tier, so the first load after a period of inactivity can take up to a minute.)*
 
-## Screenshots
-
-<!-- Add 3 screenshots to a /docs folder and update the paths below -->
-| Catalogue | Cart | Checkout |
-|---|---|---|
-| ![Catalogue](docs/catalogue.png) | ![Cart](docs/cart.png) | ![Checkout](docs/checkout.png) |
 
 ## Features
 
